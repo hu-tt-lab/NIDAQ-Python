@@ -37,15 +37,47 @@ def play(
 
 if __name__ == "__main__":
     query_devices()
-
+    
+    # Parameters -----------------
+    
+    isTbs = False
+    
+    fms = 10 # Hz
+    itrs = fms * 2 + (0 if isTbs else 1)
+    trials = 28
+    interval = 10 # sec
+    
+    start = 0 # sec
+    
+    pms = np.round(1/fms, 8) # sec
+    ftbs = 50 # Hz
+    ptbs = np.round(1/ftbs, 8) # sec
+    
+    temp = np.arange(start, start + interval * trials, interval)
+    timings = []
+    for t in temp:
+        temp_timings = list(np.arange(t, t + pms * itrs, pms))
+        append_timings = []
+        if isTbs:
+            for tt in temp_timings:
+                append_timings += [
+                    tt,
+                    tt + ptbs,
+                    tt + 2 * ptbs
+                ]
+        else: append_timings = temp_timings
+        timings += append_timings
+    timings = np.array(timings)
+    
     # Change here!! --------------
     
-    device = "Dev2"
+    device = "Dev1"
     sr = 5000 # Hz
-    duration = 7 # sec
-    trig_timings = np.array([
-        0, 5
-    ]) # sec
+    
+
+    end = np.round(np.max(timings) + 4 , 5)
+    duration = end # sec
+    trig_timings = timings # sec
     trig_duration = 0.001 # sec
     trig_voltage = 3 # V
     
@@ -61,4 +93,4 @@ if __name__ == "__main__":
         trig_fall = int(sr * (trig_timing + trig_duration))
         sig[trig_rise: trig_fall] = trig_voltage
 
-    play(sig, sr, [f"{device}/ao0"], timeout=3600)
+    play(sig, sr, [f"{device}/ao1"], timeout=3600)
