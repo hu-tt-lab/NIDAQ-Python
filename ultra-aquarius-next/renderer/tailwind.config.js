@@ -13,8 +13,25 @@ module.exports = {
       gray: colors.gray,
       red: colors.red,
       cyan: colors.cyan,
+      transparent: colors.transparent,
     },
-    extend: {},
+    extend: {
+      animation: {
+        "loop-right": "loopRight 4s linear infinite",
+      },
+      keyframes: {
+        loopRight: {
+          "0%": {
+            left: "0%",
+            transform: "TranslateX(-100%)",
+          },
+          "100%": {
+            left: "100%",
+            transform: "TranslateX(0%)",
+          },
+        },
+      },
+    },
   },
   plugins: [],
 };

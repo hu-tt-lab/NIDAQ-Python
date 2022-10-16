@@ -17,13 +17,20 @@ if (isProd) {
     width: 1000,
     height: 600,
   });
+  const controllerWindow = createWindow("controller", {
+    width: 300,
+    height: 600,
+  });
 
   if (isProd) {
     await mainWindow.loadURL("app://./sessions.html");
+    await controllerWindow.loadURL("app://./controller.html");
   } else {
     const port = process.argv[2];
     await mainWindow.loadURL(`http://localhost:${port}/sessions`);
+    await controllerWindow.loadURL(`http://localhost:${port}/controller`);
     mainWindow.webContents.openDevTools();
+    controllerWindow.webContents.openDevTools();
   }
 })();
 
