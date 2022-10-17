@@ -13,13 +13,13 @@
 
 @layer components {
   .btn {
-    @apply text-white px-4 py-1 rounded bg-cyan-600 active:bg-cyan-700 border-2 border-cyan-700;
+    @apply text-white px-4 py-1 rounded bg-cyan-600 active:bg-cyan-700 border border-cyan-700;
   }
   .btn-warning {
     @apply btn bg-red-600 active:bg-red-700 border-red-700;
   }
   .btn-disabled {
-    @apply btn bg-gray-400 active:bg-gray-400 text-gray-100;
+    @apply btn bg-gray-400 active:bg-gray-400 text-gray-500 border-gray-400;
   }
 
   .tab {

@@ -1,10 +1,33 @@
-import React from "react";
+import React, { ChangeEvent, useState } from "react";
 import { FlexCol, FlexRow } from "../components";
+import { startSession, stopSession } from "../features/api";
 import ControllerLayout from "../layouts/ControllerLayout";
 
+const sessionNames = ["iTBS-ms", "iTBS-4kHz-puretone"];
+
 function Controller() {
-  const sessions = ["session1", "session2"];
   const progress = 70;
+  const [sessionName, setSessionName] = useState<string>(sessionNames[0]);
+
+  const [runningSession, setRunningSession] = useState<boolean>(false);
+
+  const handleSessionSelect = (event: ChangeEvent<HTMLSelectElement>) => {
+    const { value } = event.target;
+    setSessionName(value);
+  };
+
+  const handleSessionStart = async () => {
+    setRunningSession(true);
+    const res = await startSession(sessionName);
+    console.log("API Message: ", res.data.message);
+    setRunningSession(false);
+  };
+  const handleSessionStop = async () => {
+    const res = await stopSession();
+    console.log("API Message: ", res.data.message);
+    setRunningSession(false);
+  };
+
   return (
     <ControllerLayout>
       <FlexCol className="h-full m-auto w-3/4 justify-evenly items-center">
@@ -14,9 +37,10 @@ function Controller() {
           <select
             id="session-select"
             className="ml-2 px-1 py-0.5 flex-1 bg-gray-700 border-2 border-gray-600 rounded"
+            onChange={handleSessionSelect}
           >
-            {sessions.map((session) => (
-              <option>{session}</option>
+            {sessionNames.map((session) => (
+              <option key={session}>{session}</option>
             ))}
           </select>
         </FlexRow>
@@ -33,8 +57,16 @@ function Controller() {
             <div className="ml-3">{progress}%</div>
           </FlexRow>
           <FlexRow className="w-full justify-center">
-            <button className="btn mr-2">start</button>
-            <button className="btn-warning ml-2">stop</button>
+            <button
+              className={`btn mr-2 ${runningSession && "btn-disabled"}`}
+              onClick={handleSessionStart}
+              disabled={runningSession}
+            >
+              start
+            </button>
+            <button className="btn-warning ml-2" onClick={handleSessionStop}>
+              stop
+            </button>
           </FlexRow>
         </FlexCol>
       </FlexCol>

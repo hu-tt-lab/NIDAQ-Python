@@ -6,4 +6,12 @@ module.exports = {
 
     return config;
   },
+  rewrites: () => {
+    return [
+      {
+        source: "/api/python/:path*",
+        destination: "http://localhost:8889/api/:path*",
+      },
+    ];
+  },
 };
