@@ -1,10 +1,14 @@
 import csv
 from datetime import datetime
 import os
+import threading
+from time import sleep
 import numpy as np
 import nidaqmx as ni
 from nidaqmx.constants import ThermocoupleType 
 import matplotlib.pyplot as plt
+
+running = True
 
 def query_devices():
     local_system = ni.system.System.local()
@@ -17,10 +21,19 @@ def query_devices():
         print('Device Name: {0}, Product Category: {1}, Product Type: {2}'.format(
             device.name, device.product_category, device.product_type))
 
+def ask_user():
+    global running
+    input("Press enter to stop")
+    running = False
 
 def play(
     outdata, sr=40000, output_mapping=['Dev1/ao0'], timeout=1800
 ):
+    global running
+
+    thread = threading.Thread(target=ask_user)
+    thread.start()
+
     nsamples = outdata.shape[0]
     with ni.Task() as write_task:
         for o in output_mapping:
@@ -30,7 +43,19 @@ def play(
 
         write_task.timing.cfg_samp_clk_timing(rate=sr, source='OnboardClock', samps_per_chan=nsamples)
         write_task.write(outdata, auto_start=True)
-        write_task.wait_until_done(timeout=timeout)
+        taskIsDone = False
+        i = 0
+        time = 0
+        while running and not taskIsDone:
+            ps = 1/sr
+            i += 1
+            time += ps
+            plt.scatter(time, i, color="k")
+            plt.pause(ps)
+            # if i >= 6:
+                # write_task.stop()
+            taskIsDone = write_task.is_task_done()
+        # write_task.wait_until_done(timeout=timeout)
         write_task.stop()
         
     return
@@ -44,7 +69,7 @@ if __name__ == "__main__":
     
     fms = 10 # Hz
     itrs = fms * 2 + (0 if isTbs else 1)
-    trials = 28
+    trials = 3
     interval = 10 # sec
     
     start = 0 # sec
@@ -71,7 +96,7 @@ if __name__ == "__main__":
     
     # Change here!! --------------
     
-    device = "Dev1"
+    device = "Dev2"
     sr = 5000 # Hz
     
 
