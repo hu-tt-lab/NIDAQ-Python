@@ -1,6 +1,5 @@
 import nidaqmx as ni
-from nidaqmx import stream_writers, constants
-import concurrent.futures
+from nidaqmx import constants
 import time
 import numpy as np
 
