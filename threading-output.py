@@ -26,8 +26,7 @@ def get_wfs(i, size):
 device = "Dev4"
 chs = ["ao0", "ao1"]
 chlen = len(chs)
-task = ni.Task()
-try:
+with ni.Task() as task:
     for ch in chs: task.ao_channels.add_ao_voltage_chan(f"{device}/{ch}")
     task.timing.cfg_samp_clk_timing(
         rate = fs,
@@ -49,11 +48,6 @@ try:
 
     task.wait_until_done()
     task.stop()
-
-except Exception as err:
-    print(err)
-finally:
-    task.close()
 
 end = time.perf_counter()
 
