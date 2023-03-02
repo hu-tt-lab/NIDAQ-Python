@@ -98,8 +98,8 @@ if __name__ == "__main__":
             indata = playrec(
                 sig, 
                 sr=40000,
-                input_mapping=['Dev1/ai0'],
-                output_mapping=['Dev1/ao0']
+                input_mapping=['Dev4/ai0'],
+                output_mapping=['Dev4/ao0']
             )
             itr_data[outvoltage] = indata
             all_data[outvoltage] += [indata]
